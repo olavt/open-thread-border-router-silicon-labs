@@ -182,9 +182,7 @@ mkdir out
 $ ./scripts/examples/gn_build_example.sh examples/chip-tool out
 ```
 
-## Create a new Matter Accessory Device
-
-To test Matter over Thread we will create a new Matter Accessory Device using another Silicon Labs xG24-DK2601B EFR32xG24 Dev Kit.
+## Test Matter Fabric with devices
 
 ...
 
@@ -194,10 +192,30 @@ To test Matter over Thread we will create a new Matter Accessory Device using an
 $ docker exec -it <container_id> sh -c "sudo ot-ctl dataset active -x"
 ```
 
-### Commission a Matter Accessory Device using the chip-tool
+### Commission a Matter over Thread Device using the chip-tool
 
 ```
 ./connectedhomeip/out/standalone/chip-tool pairing ble-thread 5535 hex:0e080000000000010000000300001435060004001fffe00208134a64c3f10ccb930708fd25da7f3d5c8ff2051019347339f0b597887b0f6b5f1bed98d3030f4f70656e5468726561642d353032310102502104105ebd52c120a93892c7ab2a42dc6fe8d40c0402a0f7f8 20202021 3840
+```
+
+### Commission a Matter over WiFi Device using the chip-tool
+
+If you have a QR-code for the device it needs to be decoded to use it with the chip-tool.
+
+Use a tool to decode the scanned QR-code into a code like this:
+
+MT:6FCJ142C00KA0648G00
+
+Use the chip-tool to decode the QR-code information:
+
+```
+$ chip-tool payload parse-setup-payload MT:6FCJ142C00KA0648G00
+```
+
+Commission the device:
+
+```
+$ chip-tool pairing ble-wifi <node_id> <SSID> <password> <setup_PIN_code> <discriminator> --bypass-attestation-verifier true
 ```
 
 ### Turn light On
