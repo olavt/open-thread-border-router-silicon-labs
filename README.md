@@ -75,10 +75,18 @@ Remember to load the kernel modules for iptables:
 $ sudo modprobe ip6table_filter
 ```
 
+Make it permanent
+
+```
+sudo nano /etc/modules-load.d/modules.conf
+```
+
+Add ip6table_filter and save.
+
 Run the following Docker command:
 
 ```
-$ docker run --sysctl "net.ipv6.conf.all.disable_ipv6=0 net.ipv4.conf.all.forwarding=1 net.ipv6.conf.all.forwarding=1" -p 8080:80 --dns=127.0.0.1 -it --volume /dev/ttyACM0:/dev/ttyACM0 --privileged openthread/otbr --radio-url spinel+hdlc+uart:///dev/ttyACM0
+$ docker run --restart=unless-stopped --sysctl "net.ipv6.conf.all.disable_ipv6=0 net.ipv4.conf.all.forwarding=1 net.ipv6.conf.all.forwarding=1" -p 8080:80 --dns=127.0.0.1 -it --volume /dev/ttyACM0:/dev/ttyACM0 --privileged openthread/otbr --radio-url spinel+hdlc+uart:///dev/ttyACM0
 ```
 
 The OpenThread Border Router should now be running.
