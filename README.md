@@ -81,12 +81,18 @@ Make it permanent
 sudo nano /etc/modules-load.d/modules.conf
 ```
 
-Add ip6table_filter and save.
+Add a line with "ip6table_filter" and save.
+
+Check if the "ip6table_filter" module is loaded:
+
+```
+lsmod | grep ip6table_filter
+```
 
 Run the following Docker command:
 
 ```
-$ docker run --restart=unless-stopped --sysctl "net.ipv6.conf.all.disable_ipv6=0 net.ipv4.conf.all.forwarding=1 net.ipv6.conf.all.forwarding=1" -p 8080:80 --dns=127.0.0.1 -it --volume /dev/ttyACM0:/dev/ttyACM0 --privileged openthread/otbr --radio-url spinel+hdlc+uart:///dev/ttyACM0
+$ docker run --sysctl "net.ipv6.conf.all.disable_ipv6=0 net.ipv4.conf.all.forwarding=1 net.ipv6.conf.all.forwarding=1" -p 8080:80 --dns=127.0.0.1 -it --volume /dev/ttyACM0:/dev/ttyACM0 --privileged openthread/otbr --radio-url spinel+hdlc+uart:///dev/ttyACM0
 ```
 
 The OpenThread Border Router should now be running.
