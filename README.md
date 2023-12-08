@@ -50,6 +50,56 @@ Find the "OpenThread - RCP" example project and create a new project from it.
 
 Build the project, find the .s37 image file and flash it to your Silicon Labs Dev Kit.
 
+## Install the OpenThread Border Router software on a Raspberry Pi
+
+### Prepare the Raspberry Pi
+
+Flash an approperiate version of the Raspberry Pi OS.
+
+![Raspberry PI OS](./images/raspberry-pi-os.png)
+
+### Update the OS
+
+```
+$ sudo apt-get update
+$ sudo apt-get upgrade
+```
+
+### Install Git
+
+```
+$ sudo apt install git
+```
+
+### Clone the OTBR repository:
+
+```
+$ git clone https://github.com/openthread/ot-br-posix
+```
+
+### Install dependencies
+
+```
+$ cd ot-br-posix
+$ ./script/bootstrap
+```
+
+### Compile and install OTBR
+
+```
+INFRA_IF_NAME=eth0 ./script/setup
+```
+
+### Reboot the Raspberry Pi
+
+The OTBR service should start on boot.
+
+Verify that all required services are enabled:
+
+```
+$ sudo systemctl status
+```
+
 ## Install Docker
 
 ```
@@ -140,8 +190,6 @@ $ sudo apt-get install git gcc g++ pkg-config libssl-dev libdbus-1-dev \
 $ sudo apt-get install pi-bluetooth avahi-utils
 ```
 
-Reboot your Raspberry Pi after installing pi-bluetooth.
-
 ### Configuring wpa_supplicant for storing permanent changes
 
 By default, wpa_supplicant is not allowed to update (overwrite) configuration. If you want the Matter application to be able to store the configuration changes permanently, you need to make the following changes:
@@ -200,7 +248,28 @@ $ ./scripts/examples/gn_build_example.sh examples/chip-tool out
 
 ...
 
+#### Form a new Thread network
+
+        sudo ot-ctl factoryreset
+        sleep 3
+        sudo ot-ctl srp server disable
+        sudo ot-ctl thread stop
+        sudo ot-ctl ifconfig down
+        sudo ot-ctl dataset init new
+        sudo ot-ctl dataset commit active
+        sudo ot-ctl srp server enable
+        sudo ot-ctl ifconfig up
+        sudo ot-ctl thread start
+
 ### Obtaining Thread network credentials
+
+When running directly on hardware:
+
+```
+sudo ot-ctl dataset active -x | sed -n 1p | sed -e "s/\r//g"
+```
+
+When running in Docker container
 
 ```
 $ docker exec -it <container_id> sh -c "sudo ot-ctl dataset active -x"
