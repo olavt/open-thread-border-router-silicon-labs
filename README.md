@@ -5,7 +5,7 @@
 
 This article shows how to build an OpenThread Border Router using a Raspberry Pi and a Silicon Labs Matter / Thread Development Board
 
-This article is based on Silicon Labs Gecko SDK version 4.3.2
+This article is based on Silicon Labs Gecko SDK version 4.4.0
 
 ### What you will need
 
@@ -50,7 +50,7 @@ Find the "OpenThread - RCP" example project and create a new project from it.
 
 Build the project, find the .s37 image file and flash it to your Silicon Labs Dev Kit.
 
-## Install the OpenThread Border Router software on a Raspberry Pi
+## Install the OpenThread Border Router software on a Raspberry Pi (not using Docker image)
 
 ### Prepare the Raspberry Pi
 
@@ -100,13 +100,15 @@ Verify that all required services are enabled:
 $ sudo systemctl status
 ```
 
-## Install Docker
+## Run the OpenThread Border Router software on a Raspberry Pi using the Docker image (not working)
+
+### Install Docker
 
 ```
 $ sudo snap install docker
 ```
 
-## Create the docker group and add your user:
+### Create the docker group and add your user:
 
 ```
 $ sudo groupadd docker
@@ -115,7 +117,7 @@ $ sudo usermod -aG docker $USER
 
 You may need to reboot for the group membership to take effect.
 
-## Run OpenThread Border Router on the Raspberry Pi
+### Run OpenThread Border Router on the Raspberry Pi
 
 Connect the Silicon Labs Dev Kit to an USB-port on the Raspberry Pi. A new port should appear under /dev. Typically named ttyACM0.
 
