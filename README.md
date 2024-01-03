@@ -65,6 +65,14 @@ $ sudo apt-get update
 $ sudo apt-get upgrade
 ```
 
+### Configure static IP-address
+
+If you want to configure a static IP-address, you can use this command:
+
+```
+sudo nmtui
+```
+
 ### Install Git
 
 ```
@@ -100,19 +108,77 @@ Verify that all required services are enabled:
 $ sudo systemctl status
 ```
 
+#### Form a new Thread network
+
+        sudo ot-ctl factoryreset
+        sleep 3
+        sudo ot-ctl srp server disable
+        sudo ot-ctl thread stop
+        sudo ot-ctl ifconfig down
+        sudo ot-ctl dataset init new
+        sudo ot-ctl dataset commit active
+        sudo ot-ctl srp server enable
+        sudo ot-ctl ifconfig up
+        sudo ot-ctl thread start
+
+### Obtaining Thread network credentials
+
+When running directly on hardware:
+
+```
+sudo ot-ctl dataset active -x | sed -n 1p | sed -e "s/\r//g"
+```
+
+When running in Docker container
+
+```
+$ docker exec -it <container_id> sh -c "sudo ot-ctl dataset active -x"
+```
+
 ## Run the OpenThread Border Router software on a Raspberry Pi using the Docker image (not working)
 
 ### Install Docker
 
+Instructions are copied from:
+
+https://docs.docker.com/engine/install/debian/
+
+Run the following command to uninstall all conflicting packages:
+
 ```
-$ sudo snap install docker
+for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
 ```
 
-### Create the docker group and add your user:
+Install using the apt repository:
+
+1. Set up Docker's apt repository:
+```
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+```
+
+2. Install the Docker packages
 
 ```
-$ sudo groupadd docker
-$ sudo usermod -aG docker $USER
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+Create the docker group and add your user:
+
+```
+sudo groupadd docker
+sudo usermod -aG docker $USER
 ```
 
 You may need to reboot for the group membership to take effect.
@@ -250,29 +316,3 @@ $ ./scripts/examples/gn_build_example.sh examples/chip-tool out
 
 ...
 
-#### Form a new Thread network
-
-        sudo ot-ctl factoryreset
-        sleep 3
-        sudo ot-ctl srp server disable
-        sudo ot-ctl thread stop
-        sudo ot-ctl ifconfig down
-        sudo ot-ctl dataset init new
-        sudo ot-ctl dataset commit active
-        sudo ot-ctl srp server enable
-        sudo ot-ctl ifconfig up
-        sudo ot-ctl thread start
-
-### Obtaining Thread network credentials
-
-When running directly on hardware:
-
-```
-sudo ot-ctl dataset active -x | sed -n 1p | sed -e "s/\r//g"
-```
-
-When running in Docker container
-
-```
-$ docker exec -it <container_id> sh -c "sudo ot-ctl dataset active -x"
-```
